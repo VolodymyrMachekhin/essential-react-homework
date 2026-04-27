@@ -8,6 +8,16 @@ export interface Lottery {
   status: 'running' | 'finished';
 }
 
+export async function getLotteries(): Promise<Lottery[]> {
+  const response = await fetch(`${API_URL}/lotteries`);
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch lotteries');
+  }
+
+  return response.json();
+}
+
 export async function createLottery(data: { name: string; prize: string }): Promise<Lottery> {
   const response = await fetch(`${API_URL}/lotteries`, {
     method: 'POST',

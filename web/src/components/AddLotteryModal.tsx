@@ -10,12 +10,12 @@ import {
 import { LoadingButton } from '@mui/lab';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { createLottery } from '../api';
+import { createLottery, type Lottery } from '../api';
 
 interface Props {
   open: boolean;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (lottery: Lottery) => void;
 }
 
 const validationSchema = Yup.object({
@@ -29,9 +29,9 @@ export function AddLotteryModal({ open, onClose, onSuccess }: Props) {
     validationSchema,
     onSubmit: async (values, { setSubmitting, setStatus, resetForm }) => {
       try {
-        await createLottery(values);
+        const lottery = await createLottery(values);
         resetForm();
-        onSuccess();
+        onSuccess(lottery);
         onClose();
       } catch (error) {
         setStatus(error instanceof Error ? error.message : 'Something went wrong');
