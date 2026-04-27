@@ -11,6 +11,7 @@ import {
   Chip,
   CircularProgress,
   Box,
+  TextField,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { AddLotteryModal } from './components/AddLotteryModal';
@@ -21,6 +22,7 @@ function App() {
   const [successOpen, setSuccessOpen] = useState(false);
   const [lotteries, setLotteries] = useState<Lottery[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     getLotteries()
@@ -33,19 +35,33 @@ function App() {
     setSuccessOpen(true);
   };
 
+  const filtered = lotteries.filter((l) => l.name.toLowerCase().includes(search.toLowerCase()));
+
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
       <Typography variant="h4" component="h1" gutterBottom>
         Lotteries
       </Typography>
 
+      <TextField
+        label="Search"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        fullWidth
+        sx={{ mb: 2 }}
+      />
+
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
           <CircularProgress />
         </Box>
+      ) : filtered.length === 0 ? (
+        <Typography color="text.secondary" sx={{ mt: 4, textAlign: 'center' }}>
+          {search ? 'No lotteries match your search.' : 'No lotteries yet. Create one!'}
+        </Typography>
       ) : (
         <List>
-          {lotteries.map((lottery) => (
+          {filtered.map((lottery) => (
             <ListItem key={lottery.id} divider>
               <ListItemText primary={lottery.name} secondary={`Prize: ${lottery.prize}`} />
               <Chip
